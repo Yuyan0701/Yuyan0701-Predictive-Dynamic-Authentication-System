@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDAS Security Questions</title>
+    <style>
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: #fff;
+        }
+        .container {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            padding: 30px 40px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            color: #333;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #2575fc;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 14px;
+        }
+        select, input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        button {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: white;
+            font-size: 16px;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background: linear-gradient(135deg, #2575fc, #6a11cb);
+        }
+        #message {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Security Questions</h1>
+        <form id="securityForm">
+            <div class="form-group">
+                <label for="question1">Security Question 1</label>
+                <select id="question1" required>
+                    <option value="">Select your first security question</option>
+                    <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+                      <option value="What was your first pet's name?">What was your first pet's name?</option>
+                      <option value="What city were you born in?">What city were you born in?</option>
+                      <option value="What is your favorite book?">What is your favorite book?</option>
+                      <option value="What was the name of your first middle school?">What was the name of your first middle school?</option> 
+                      <option value="What is your favorite food?">What is your favorite food?</option> 
+                      <option value="What was the name of your first toy?">What was the name of your first toy?</option> 
+                      <option value="What was the name of your primary school?">What was the name of your primary school?</option> 
+                      <option value="What is your father's last name?">What is your father's last name?</option> 
+                      <option value="What was your first car?">What was your first car?</option> 
+                      <option value="What is your favorite color?">What is your favorite color?</option> 
+                      <option value="What is the name of your best friend?">What is the name of your best friend?</option> 
+                      <option value="In which city were you born?">In which city were you born?</option> 
+                      <option value="What is your favorite movie?">What is your favorite movie?</option> 
+                </select>
+                <input type="text" id="answer1" placeholder="Your answer" required>
+            </div>
+            <div class="form-group">
+                <label for="question2">Security Question 2</label>
+                <select id="question2" required>
+                    <option value="">Select your second security question</option>
+                    <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+                      <option value="What was your first pet's name?">What was your first pet's name?</option>
+                      <option value="What city were you born in?">What city were you born in?</option>
+                      <option value="What is your favorite book?">What is your favorite book?</option>
+                      <option value="What was the name of your first middle school?">What was the name of your first middle school?</option> 
+                      <option value="What is your favorite food?">What is your favorite food?</option> 
+                      <option value="What was the name of your first toy?">What was the name of your first toy?</option> 
+                      <option value="What was the name of your primary school?">What was the name of your primary school?</option> 
+                      <option value="What is your father's last name?">What is your father's last name?</option> 
+                      <option value="What was your first car?">What was your first car?</option> 
+                      <option value="What is your favorite color?">What is your favorite color?</option> 
+                      <option value="What is the name of your best friend?">What is the name of your best friend?</option> 
+                      <option value="In which city were you born?">In which city were you born?</option> 
+                      <option value="What is your favorite movie?">What is your favorite movie?</option> 
+                </select>
+                <input type="text" id="answer2" placeholder="Your answer" required>
+            </div>
+            <button type="submit">Submit Security Questions</button>
+            <div id="message"></div>
+        </form>
+    </div>
+    <script>
+        document.getElementById("securityForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const question1 = document.getElementById("question1").value;
+            const answer1 = document.getElementById("answer1").value;
+            const question2 = document.getElementById("question2").value;
+            const answer2 = document.getElementById("answer2").value;
+            const userId = new URLSearchParams(window.location.search).get('user_id');
+            const messageDiv = document.getElementById("message");
+
+            if (question1 === question2) {
+                messageDiv.textContent = "Please select different security questions";
+                messageDiv.style.color = "red";
+                messageDiv.style.display = "block";
+                return;
+            }
+
+            try {
+                const response = await fetch("/security?user_id=" + userId, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        question1: question1,
+                        answer1: answer1,
+                        question2: question2,
+                        answer2: answer2
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    messageDiv.textContent = "Security questions set successfully! Redirecting...";
+                    messageDiv.style.color = "green";
+                    messageDiv.style.display = "block";
+
+                    setTimeout(() => {
+                        window.location.href = data.redirect_url || "/main";
+                    }, 2000);
+                } else {
+                    messageDiv.textContent = data.message || "Failed to set security questions. Please try again.";
+                    messageDiv.style.color = "red";
+                    messageDiv.style.display = "block";
+                }
+            } catch (error) {
+                messageDiv.textContent = "An error occurred. Please try again later.";
+                messageDiv.style.color = "red";
+                messageDiv.style.display = "block";
+                console.error("Error:", error);
+            }
+        });
+    </script>
+</body>
+</html>

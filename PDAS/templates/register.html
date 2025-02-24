@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDAS Registration</title>
+    <style>
+        body {
+            font-family: "Poppins", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 90%;
+            max-width: 450px;
+            text-align: left;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            font-size: 32px;
+            margin-bottom: 30px;
+            color: #2575fc;
+            text-align: center;
+            font-weight: 600;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #666;
+            font-size: 14px;
+        }
+        input,
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e1e1;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        input:focus,
+        select:focus {
+            border-color: #2575fc;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.1);
+        }
+        .phone-group {
+            display: flex;
+            gap: 12px;
+        }
+        #countryCode {
+            width: 140px;
+            flex-shrink: 0;
+        }
+        button {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: white;
+            font-size: 16px;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+            margin-top: 20px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 117, 252, 0.2);
+        }
+        #message {
+            margin-top: 15px;
+            font-size: 14px;
+            text-align: center;
+            display: none;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .password-requirements {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #666;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .requirement {
+            display: flex;
+            align-items: center;
+            margin: 4px 0;
+        }
+        .requirement-icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 10px;
+        }
+        .requirement.met .requirement-icon {
+            background-color: #00cc00;
+            color: white;
+        }
+        .requirement.unmet .requirement-icon {
+            background-color: #ddd;
+            color: #666;
+        }
+        .password-strength {
+            margin-top: 8px;
+            height: 4px;
+            background: #e1e1e1;
+            border-radius: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+        .strength-bar {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s ease, background-color 0.3s ease;
+            border-radius: 2px;
+        }
+        .strength-text {
+            font-size: 12px;
+            margin-top: 6px;
+            color: #666;
+        }
+        .weak { background-color: #ff4d4d; width: 33.33%; }
+        .medium { background-color: #ffd700; width: 66.66%; }
+        .strong { background-color: #00cc00; width: 100%; }
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        .login-link a {
+            color: #2575fc;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PDAS Registration</h1>
+        <form id="registerForm">
+            <div class="input-group">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" required />
+            </div>
+            <div class="input-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" required />
+            </div>
+            <div class="input-group">
+                <label for="usernameEmail">Email Address</label>
+                <input type="email" id="usernameEmail" required />
+            </div>
+            <div class="input-group">
+                <label>Phone Number</label>
+                <div class="phone-group">
+                    <select id="countryCode" required>
+                        <option value="+61">🇦🇺 +61 (Australia)</option>
+                        <option value="+1">🇺🇸 +1 (USA)</option>
+                        <option value="+44">🇬🇧 +44 (UK)</option>
+                        <option value="+86">🇨🇳 +86 (China)</option>
+                        <option value="+81">🇯🇵 +81 (Japan)</option>
+                        <option value="+82">🇰🇷 +82 (South Korea)</option>
+                        <option value="+91">🇮🇳 +91 (India)</option>
+                        <option value="+64">🇳🇿 +64 (New Zealand)</option>
+                        <option value="+65">🇸🇬 +65 (Singapore)</option>
+                        <option value="+62">🇮🇩 +62 (Indonesia)</option>
+                        <option value="+84">🇻🇳 +84 (Vietnam)</option>
+                        <option value="+66">🇹🇭 +66 (Thailand)</option>
+                    </select>
+                    <input type="tel" id="phone" required />
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required />
+                <div class="password-requirements">
+                    <div class="requirement" data-requirement="length">
+                        <span class="requirement-icon">✓</span>
+                        At least 12 characters
+                    </div>
+                    <div class="requirement" data-requirement="uppercase">
+                        <span class="requirement-icon">✓</span>
+                        At least one uppercase letter
+                    </div>
+                    <div class="requirement" data-requirement="lowercase">
+                        <span class="requirement-icon">✓</span>
+                        At least one lowercase letter
+                    </div>
+                    <div class="requirement" data-requirement="number">
+                        <span class="requirement-icon">✓</span>
+                        At least one number
+                    </div>
+                    <div class="requirement" data-requirement="special">
+                        <span class="requirement-icon">✓</span>
+                        At least one special character
+                    </div>
+                    <div class="requirement" data-requirement="noRepeat">
+                        <span class="requirement-icon">✓</span>
+                        No repeated characters (3+ times)
+                    </div>
+                    <div class="requirement" data-requirement="noCommon">
+                        <span class="requirement-icon">✓</span>
+                        No common patterns
+                    </div>
+                </div>
+                <div class="password-strength">
+                    <div class="strength-bar"></div>
+                </div>
+                <div class="strength-text"></div>
+            </div>
+            <button type="submit">Create Account</button>
+            <div id="message"></div>
+            <div class="login-link">
+                Already have an account? <a href="/templates/login.html">Login here</a>
+            </div>
+        </form>
+    </div>
+    <script>
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            const requirements = {
+                length: password.length >= 12,
+                uppercase: /[A-Z]/.test(password),
+                lowercase: /[a-z]/.test(password),
+                number: /[0-9]/.test(password),
+                special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+                noRepeat: !/(.)\1{2,}/.test(password),
+                noCommon: !/123|abc|qwerty|password|admin/i.test(password)
+            };
+            
+            // Update requirement indicators
+            Object.entries(requirements).forEach(([req, isMet]) => {
+                const reqElement = document.querySelector(`.requirement[data-requirement="${req}"]`);
+                if (reqElement) {
+                    if (isMet) {
+                        reqElement.classList.add('met');
+                        reqElement.classList.remove('unmet');
+                        strength++;
+                    } else {
+                        reqElement.classList.add('unmet');
+                        reqElement.classList.remove('met');
+                    }
+                }
+            });
+            
+            const strengthBar = document.querySelector('.strength-bar');
+            const strengthText = document.querySelector('.strength-text');
+            
+            strengthBar.className = 'strength-bar';
+            if (strength === 0) {
+                strengthBar.style.width = '0';
+                strengthText.textContent = '';
+            } else if (strength <= 3) {
+                strengthBar.classList.add('weak');
+                strengthText.textContent = 'Weak password';
+                strengthText.style.color = '#ff4d4d';
+            } else if (strength <= 5) {
+                strengthBar.classList.add('medium');
+                strengthText.textContent = 'Medium password';
+                strengthText.style.color = '#ffd700';
+            } else {
+                strengthBar.classList.add('strong');
+                strengthText.textContent = 'Strong password';
+                strengthText.style.color = '#00cc00';
+            }
+
+            return strength === Object.keys(requirements).length;
+        }
+
+        document.getElementById('password').addEventListener('input', function(e) {
+            checkPasswordStrength(e.target.value);
+        });
+
+        document.getElementById("registerForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const password = document.getElementById("password").value;
+            
+            if (!checkPasswordStrength(password)) {
+                const messageDiv = document.getElementById("message");
+                messageDiv.textContent = "Please ensure your password meets all requirements";
+                messageDiv.className = "error";
+                messageDiv.style.display = "block";
+                return;
+            }
+
+            const firstName = document.getElementById("firstName").value;
+            const lastName = document.getElementById("lastName").value;
+            const usernameEmail = document.getElementById("usernameEmail").value;
+            const countryCode = document.getElementById("countryCode").value;
+            const phone = document.getElementById("phone").value;
+            const messageDiv = document.getElementById("message");
+
+            try {
+                const response = await fetch("/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        first_name: firstName,
+                        last_name: lastName,
+                        username_email: usernameEmail,
+                        country_code: countryCode,
+                        phone: phone,
+                        password: password,
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    messageDiv.textContent = "Registration successful! Redirecting to the security page...";
+                    messageDiv.className = "success";
+                    messageDiv.style.display = "block";
+
+                    setTimeout(() => {
+                        window.location.href = data.redirect_url || "/main";
+                    }, 2000);
+                } else {
+                    messageDiv.textContent = data.message || "Registration failed. Please try again.";
+                    messageDiv.className = "error";
+                    messageDiv.style.display = "block";
+                }
+            } catch (error) {
+                messageDiv.textContent = "An error occurred. Please try again later.";
+                messageDiv.className = "error";
+                messageDiv.style.display = "block";
+                console.error("Error:", error);
+            }
+        });
+
+        // Initialize password requirements display
+        document.querySelectorAll('.requirement').forEach(req => {
+            req.classList.add('unmet');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDAS Login</title>
+    <style>
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: #fff;
+        }
+        .container {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            padding: 30px 40px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            color: #333;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #2575fc;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        button {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: white;
+            font-size: 16px;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: linear-gradient(135deg, #2575fc, #6a11cb);
+        }
+        #message {
+            margin-top: 15px;
+            font-size: 14px;
+            color: red;
+        }
+        .forgot-password {
+            color: #2575fc;
+            text-decoration: none;
+            font-size: 14px;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+        #forgotPasswordForm {
+            display: none;
+        }
+        form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .input-group {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        .password-requirements {
+            text-align: left;
+            font-size: 12px;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            color: #666;
+        }
+        .requirement {
+            margin: 3px 0;
+            display: flex;
+            align-items: center;
+        }
+        .requirement::before {
+            content: "•";
+            margin-right: 5px;
+            color: #ccc;
+        }
+        .requirement.met::before {
+            content: "✓";
+            color: #4CAF50;
+        }
+        .requirement.unmet::before {
+            content: "×";
+            color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Login</h1>
+        <form id="loginForm">
+            <div class="input-group">
+                <input type="text" id="usernameEmail" placeholder="Enter your username or email" required />
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" placeholder="Enter your password" required />
+                <div class="password-requirements">
+                    <div class="requirement" id="length">At least 8 characters</div>
+                    <div class="requirement" id="uppercase">At least one uppercase letter</div>
+                    <div class="requirement" id="lowercase">At least one lowercase letter</div>
+                    <div class="requirement" id="number">At least one number</div>
+                    <div class="requirement" id="special">At least one special character</div>
+                </div>
+            </div>
+            <div class="input-group">
+                <input type="password" id="dynamicPassword" placeholder="Enter your dynamic password" style="display: none;" />
+            </div>
+            <button type="submit" id="submitButton">Submit</button>
+            <button type="button" id="loginButton" style="display: none;">Login</button>
+            <a href="#" class="forgot-password" id="forgotPasswordLink">Forgot Password?</a>
+        </form>
+        
+        <form id="forgotPasswordForm">
+            <div class="input-group">
+                <input type="email" id="resetEmail" placeholder="Enter your email" required />
+            </div>
+            <div class="input-group">
+                <select id="securityQuestion1" required>
+                    <option value="">Select security question 1</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <input type="text" id="securityAnswer1" placeholder="Answer 1" required />
+            </div>
+            <div class="input-group">
+                <select id="securityQuestion2" required>
+                    <option value="">Select security question 2</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <input type="text" id="securityAnswer2" placeholder="Answer 2" required />
+            </div>
+            <button type="submit">Reset Password</button>
+            <button type="button" id="backToLogin">Back to Login</button>
+        </form>
+        
+        <div id="message"></div>
+    </div>
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+        const backToLogin = document.getElementById('backToLogin');
+        const usernameEmail = document.getElementById('usernameEmail');
+        const password = document.getElementById('password');
+        const dynamicPassword = document.getElementById('dynamicPassword');
+        const submitButton = document.getElementById('submitButton');
+        const loginButton = document.getElementById('loginButton');
+        const messageDiv = document.getElementById('message');
+        const resetEmail = document.getElementById('resetEmail');
+        const securityQuestion1 = document.getElementById('securityQuestion1');
+        const securityQuestion2 = document.getElementById('securityQuestion2');
+
+        // Password validation requirements
+        const requirements = {
+            length: str => str.length >= 8,
+            uppercase: str => /[A-Z]/.test(str),
+            lowercase: str => /[a-z]/.test(str),
+            number: str => /[0-9]/.test(str),
+            special: str => /[!@#$%^&*(),.?":{}|<>]/.test(str)
+        };
+
+        // Update password requirements visual feedback
+        password.addEventListener('input', function() {
+            const value = this.value;
+            for (const [requirement, validateFunc] of Object.entries(requirements)) {
+                const element = document.getElementById(requirement);
+                if (validateFunc(value)) {
+                    element.classList.remove('unmet');
+                    element.classList.add('met');
+                } else {
+                    element.classList.remove('met');
+                    element.classList.add('unmet');
+                }
+            }
+        });
+
+        // Check if all password requirements are met
+        function isPasswordValid(password) {
+            return Object.values(requirements).every(func => func(password));
+        }
+
+        // Load security questions
+        const securityQuestions = [
+            "What is your mother's maiden name?",
+            "What was your first pet's name?",
+            "What city were you born in?",
+            "What is your favorite book?",
+            "What was the name of your first middle school?",
+            "What is your favorite food?",
+            "What was the name of your first toy?",
+            "What was the name of your primary school?",
+            "What is your father's last name?",
+            "What was your first car?",
+            "What is your favorite color?",
+            "What is the name of your best friend?",
+            "In which city were you born?",
+            "What is your favorite movie?"
+        ];
+
+        // Populate security questions
+        securityQuestions.forEach(question => {
+            securityQuestion1.add(new Option(question, question));
+            securityQuestion2.add(new Option(question, question));
+        });
+
+        forgotPasswordLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            loginForm.style.display = 'none';
+            forgotPasswordForm.style.display = 'block';
+        });
+
+        backToLogin.addEventListener('click', function() {
+            loginForm.style.display = 'block';
+            forgotPasswordForm.style.display = 'none';
+            messageDiv.innerText = '';
+        });
+
+        // First stage: Verify username and password
+        loginForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            if (!isPasswordValid(password.value)) {
+                messageDiv.innerText = 'Please ensure your password meets all requirements.';
+                messageDiv.style.color = 'red';
+                return;
+            }
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username_email: usernameEmail.value,
+                        password: password.value
+                    }),
+                });
+                const result = await response.json();
+
+                if (response.ok) {
+                    messageDiv.innerText = result.message;
+                    messageDiv.style.color = 'green';
+                    dynamicPassword.style.display = 'block';
+                    submitButton.style.display = 'none';
+                    loginButton.style.display = 'block';
+                } else {
+                    messageDiv.innerText = result.message;
+                    messageDiv.style.color = 'red';
+                }
+            } catch (error) {
+                messageDiv.innerText = 'An error occurred. Please try again.';
+                messageDiv.style.color = 'red';
+            }
+        });
+
+        // Second stage: Verify dynamic password
+        loginButton.addEventListener('click', async function () {
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username_email: usernameEmail.value,
+                        password: password.value,
+                        dynamic_password: dynamicPassword.value
+                    }),
+                });
+                const result = await response.json();
+
+                if (response.ok) {
+                    messageDiv.innerText = result.message;
+                    messageDiv.style.color = 'green';
+                    window.location.href = '/final';
+                } else {
+                    messageDiv.innerText = result.message;
+                    messageDiv.style.color = 'red';
+                }
+            } catch (error) {
+                messageDiv.innerText = 'An error occurred. Please try again.';
+                messageDiv.style.color = 'red';
+            }
+        });
+
+        // Forgot password form submission
+        forgotPasswordForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            try {
+                const response = await fetch('/forgot-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username_email: resetEmail.value,
+                        question1: securityQuestion1.value,
+                        answer1: document.getElementById('securityAnswer1').value,
+                        question2: securityQuestion2.value,
+                        answer2: document.getElementById('securityAnswer2').value
+                    }),
+                });
+                const result = await response.json();
+
+                messageDiv.innerText = result.message;
+                messageDiv.style.color = response.ok ? 'green' : 'red';
+
+                if (response.ok) {
+                    setTimeout(() => {
+                        loginForm.style.display = 'block';
+                        forgotPasswordForm.style.display = 'none';
+                    }, 3000);
+                }
+            } catch (error) {
+                messageDiv.innerText = 'An error occurred. Please try again.';
+                messageDiv.style.color = 'red';
+            }
+        });
+    </script>
+</body>
+</html>
